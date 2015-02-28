@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<mapper namespace="org.elasticsearch.www.dao.UserDAO">
+ 
+	<resultMap id="userResultMap" type="user">
+        <id property="id" column="id" javaType="int" jdbcType="NUMERIC" />
+        <result property="username" column="username" />
+        <result property="email" column="email" />
+        <result property="phone" column="phone" />
+        <result property="groupName" column="group_name" />
+        <result property="description" column="description" />
+        <result property="privilegeName" column="privilege_name" />
+	</resultMap>
+	
+	<select id="getUserInfo" resultMap="userResultMap">
+        SELECT user_.name username,
+               user_.email email,
+               user_.phone phone,
+               group_.name group_name,
+               group_.description,
+               privilege_.name privilege_name
+          FROM HAC_USER_INFO               user_,
+               HAC_USER_GROUP_REL          ug_,
+               HAC_GROUP_INFO              group_,
+               HAC_USER_DATA_PRIVILEGE_REL up_,
+               HAC_DATA_PRIVILEGE          privilege_
+         WHERE user_.id = ug_.user_id
+           AND ug_.group_id = group_.id
+           AND user_.id = up_.user_id
+           AND up_.data_privilege_id = privilege_.id
+           AND user_.name IN ('8800169144',
+                              '8800175719')
+	</select>
+	
+ 
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+        
+    <!-- datasource -->	
+	<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"> 
+	    <property name="driverClassName"> 
+	    	<value>oracle.jdbc.driver.OracleDriver</value> 
+	    </property> 
+	    <property name="url"> 
+	    	<value>jdbc:oracle:thin:@hrbvsdb.JXJG.corp.haier.com:1521:hrbvsdb</value> 
+	    </property> 
+	    <property name="username"> 
+	    	<value>hac</value> 
+	    </property> 
+	    <property name="password"> 
+	     	<value>hac_haier</value> 
+	    </property> 
+	    <property name="maxActive"> 
+	     	<value>20</value> 
+	    </property> 
+	    <property name="maxIdle"> 
+	     	<value>2</value> 
+	    </property> 
+	    <property name="maxWait"> 
+	    	<value>120000</value> 
+	    </property> 
+    </bean>  -->
+    
+    <bean id="dataSource"
+			class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@:1521/hrbvsdb</value>
+		</property>
+		<property name="username">
+			<value></value>
+		</property>
+		<property name="password">
+			<value></value>
+		</property>
+	</bean>
+    
+     <!-- configurations -->    
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	  	<property name="dataSource" ref="dataSource" />
+	  	<property name="configLocation" value="classpath:/mybatis/sqlMapConfig.xml" />
+	  	<property name="mapperLocations" value="classpath:/mybatis/*Mapper.xml" />  
+	</bean>
+
+    <!-- daos -->
+    <bean id="baseDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" abstract="true" lazy-init="true">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+    <bean id="userDAO" class="org.mybatis.spring.mapper.MapperFactoryBean" parent="baseDAO">
+		<property name="mapperInterface" value="org.elasticsearch.www.dao.UserDAO" />
+	</bean>
+    
+    <!-- services -->
+    <bean id="userService" class="org.elasticsearch.www.service.impl.UserServiceImpl">
+        <property name="userDAO" ref="userDAO"/>
+    </bean>
+
+
+</beans>
